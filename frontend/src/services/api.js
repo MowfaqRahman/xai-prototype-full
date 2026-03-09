@@ -1,20 +1,20 @@
 const BASE_URL = 'http://localhost:8000';
 
 export const predictLoan = async (formData) => {
-    const calculatedPercent = formData.person_income > 0 
-        ? (parseFloat(formData.loan_amnt) / parseFloat(formData.person_income)) 
-        : 0;
 
     const payload = {
-        ...formData,
-        person_age: parseInt(formData.person_age),
+        person_age: parseInt(formData.person_age, 10),
+        person_gender: formData.person_gender.trim().toLowerCase(),
+        person_education: formData.person_education.trim(),
         person_income: parseFloat(formData.person_income),
-        person_emp_exp: parseInt(formData.person_emp_exp),
+        person_emp_exp: parseInt(formData.person_emp_exp, 10),
+        person_home_ownership: formData.person_home_ownership.trim().toUpperCase(),
         loan_amnt: parseFloat(formData.loan_amnt),
+        loan_intent: formData.loan_intent.trim().toUpperCase(),
         loan_int_rate: parseFloat(formData.loan_int_rate),
-        loan_percent_income: parseFloat(calculatedPercent.toFixed(2)),
-        cb_person_cred_hist_length: parseInt(formData.cb_person_cred_hist_length),
-        credit_score: parseInt(formData.credit_score)
+        cb_person_cred_hist_length: parseInt(formData.cb_person_cred_hist_length, 10),
+        credit_score: parseInt(formData.credit_score, 10),
+        previous_loan_defaults_on_file: formData.previous_loan_defaults_on_file.trim()
     };
 
     const response = await fetch(`${BASE_URL}/predict`, {
