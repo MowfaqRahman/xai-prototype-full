@@ -1,61 +1,54 @@
-import React, { useState } from 'react';
-import Sidebar from './components/Sidebar';
-import LoanForm from './components/LoanForm';
-import ResultCard from './components/ResultCard';
-import { predictLoan } from './services/api';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import ProtectedRoute from './components/ProtectedRoute';
+import LoanApplicationPage from './pages/LoanApplicationPage';
+import "./App.css"
 
 function App() {
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+    return (
+        <Router>
+            <div className="app-container">
+                {/* VERTICAL SIDEBAR */}
+                <aside className="sidebar">
+                    <div className="logo-icon">
+                        <i className="ri-bank-line"></i>
+                    </div>
+                    
+                    {/* Applicant Form Link */}
+                    <NavLink 
+                        to="/" 
+                        className={({ isActive }) => isActive && window.location.pathname === '/' ? "nav-item active" : "nav-item"}
+                        title="New Application"
+                    >
+                        <i className="ri-file-add-line"></i>
+                    </NavLink>
 
-  const handleSubmit = async (formData) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await predictLoan(formData);
-      setResult(data);
-    } catch (err) {
-      console.error(err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+                    {/* Officer Portal Link */}
+                    <NavLink 
+                        to="/dashboard" 
+                        className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
+                        title="Officer Portal"
+                    >
+                        <i className="ri-shield-user-line"></i>
+                    </NavLink>
+                </aside>
 
-  const handleReset = () => {
-    setResult(null);
-    setError(null);
-  };
-
-  return (
-    <div className="app-container">
-      <Sidebar />
-
-      <main className="dashboard-main">
-        <header className="dashboard-header">
-          <h1>Loan <strong>Predictor</strong></h1>
-          <p style={{ color: 'var(--secondary)' }}>
-            Fill in the details below to check loan eligibility powered by AI.
-          </p>
-        </header>
-
-        {!result ? (
-          <LoanForm 
-            onSubmit={handleSubmit} 
-            loading={loading} 
-            error={error} 
-          />
-        ) : (
-          <ResultCard 
-            result={result} 
-            onReset={handleReset} 
-          />
-        )}
-      </main>
-    </div>
-  );
+                {/* MAIN SCROLLABLE CONTENT AREA */}
+                <main className="dashboard-main">
+                    <Routes>
+                        <Route path="/" element={<LoanApplicationPage />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/dashboard" element={
+                            <ProtectedRoute>
+                                <Dashboard />
+                            </ProtectedRoute>
+                        } />
+                    </Routes>
+                </main>
+            </div>
+        </Router>
+    );
 }
 
 export default App;
