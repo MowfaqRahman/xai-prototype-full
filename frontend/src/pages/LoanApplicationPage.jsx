@@ -11,7 +11,7 @@ const LoanApplicationPage = () => {
     const handleFormSubmit = async (formData) => {
         setLoading(true);
         setError(null);
-        
+
         try {
             const aiResponse = await predictLoan(formData);
             setResult(aiResponse);
@@ -35,7 +35,7 @@ const LoanApplicationPage = () => {
                                 <span>AI-Powered</span> Loan Approvals
                             </h1>
                             <p className="hero-subtitle">
-                                Experience the next generation of credit assessment. Our advanced Explainable AI (XAI) 
+                                Experience the next generation of credit assessment. Our advanced Explainable AI (XAI)
                                 analyzes your profile in seconds to provide instant, transparent loan status predictions.
                             </p>
                             <div className="hero-badges">
@@ -60,27 +60,27 @@ const LoanApplicationPage = () => {
                             <h2>Start Your <strong>Application</strong></h2>
                             <p>Fill in your details below for an instant AI assessment.</p>
                         </div>
-                        <LoanForm 
-                            onSubmit={handleFormSubmit} 
-                            loading={loading} 
-                            error={error} 
+                        <LoanForm
+                            onSubmit={handleFormSubmit}
+                            loading={loading}
+                            error={error}
                         />
                     </section>
                 </>
             ) : (
                 <div className="result-container" style={{ paddingTop: '2rem' }}>
-                    <ResultCard 
-                        result={result} 
-                        onReset={() => setResult(null)} 
+                    <ResultCard
+                        result={result}
+                        onReset={() => setResult(null)}
                     />
                 </div>
             )}
-            
+
             <footer className="landing-footer">
-                <p>&copy; 2024 Zadfar XAI Prototype. All rights reserved.</p>
+                <p>&copy; 2026 XAI Prototype. All rights reserved.</p>
             </footer>
         </div>
     );
 };
 
-export default LoanApplicationPage;
+export default LoanApplicationPage;

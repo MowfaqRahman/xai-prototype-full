@@ -50,7 +50,7 @@ const Login = () => {
                                 <input
                                     type="email"
                                     className="glass-input"
-                                    placeholder="officer@zadfar-bank.com"
+                                    placeholder="officer@-bank.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required

@@ -56,6 +56,10 @@ body {
     animation: fadeIn 0.5s ease-out forwards;
 }
 
+.slide-up {
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
 /* Modern Spinner */
 .spinner {
     width: 20px;
@@ -91,6 +95,17 @@ body {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }
 

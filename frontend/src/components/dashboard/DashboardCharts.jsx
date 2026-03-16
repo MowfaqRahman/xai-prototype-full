@@ -139,7 +139,7 @@ export const TrendChart = ({ data }) => {
                         fill="url(#barGradientApproved)"
                         radius={[4, 4, 0, 0]}
                         barSize={12}
-                        style={{ filter: 'drop-shadow(0 4px 6px rgba(16, 185, 129, 0.3))' }}
+                        style={{ filter: 'drop-shadow(0 0 6px #10b981)' }}
                     >
                         <LabelList dataKey="approved" position="top" style={{ fill: '#94a3b8', fontSize: '9px' }} />
                     </Bar>
@@ -149,7 +149,7 @@ export const TrendChart = ({ data }) => {
                         fill="url(#barGradientRejected)"
                         radius={[4, 4, 0, 0]}
                         barSize={12}
-                        style={{ filter: 'drop-shadow(0 4px 6px rgba(239, 68, 68, 0.3))' }}
+                        style={{ filter: 'drop-shadow(0 0 6px #ef4444)' }}
                     >
                         <LabelList dataKey="rejected" position="top" style={{ fill: '#94a3b8', fontSize: '9px' }} />
                     </Bar>
@@ -169,14 +169,14 @@ export const ProductPerformance = ({ data }) => {
                         <span>{item.name}</span>
                         <span>{item.value}%</span>
                     </div>
-                    <div style={{ height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px' }}>
+                    <div style={{ height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
                         <div style={{
                             height: '100%',
                             width: `${item.value}%`,
                             background: item.fill || 'var(--primary)',
                             borderRadius: '4px',
                             transition: 'width 1s ease',
-                            boxShadow: `0 0 12px ${(item.fill || '#3b82f6')}88`
+                            filter: `drop-shadow(0 0 6px ${item.fill || 'var(--primary)'})`
                         }}></div>
                     </div>
                 </div>
@@ -202,10 +202,10 @@ export const RiskSegmentation = ({ data }) => {
                         stroke="none"
                     >
                         {data.map((entry, index) => (
-                            <Cell 
-                                key={`cell-${index}`} 
-                                fill={entry.fill} 
-                                style={{ 
+                            <Cell
+                                key={`cell-${index}`}
+                                fill={entry.fill}
+                                style={{
                                     filter: `drop-shadow(0 0 6px ${entry.fill})`,
                                     outline: 'none'
                                 }}
@@ -213,9 +213,9 @@ export const RiskSegmentation = ({ data }) => {
                         ))}
                     </Pie>
                     <Tooltip
-                        contentStyle={{ 
-                            background: 'rgba(15, 23, 42, 0.9)', 
-                            border: '1px solid rgba(255,255,255,0.1)', 
+                        contentStyle={{
+                            background: 'rgba(15, 23, 42, 0.9)',
+                            border: '1px solid rgba(255,255,255,0.1)',
                             borderRadius: '12px',
                             backdropFilter: 'blur(8px)'
                         }}
@@ -245,20 +245,20 @@ export const HomeOwnershipPie = ({ data }) => {
                         stroke="none"
                     >
                         {data.map((entry, index) => (
-                            <Cell 
-                                key={`cell-${index}`} 
-                                fill={entry.fill} 
-                                style={{ 
-                                    filter: `drop-shadow(0 0 5px ${entry.fill})`,
+                            <Cell
+                                key={`cell-${index}`}
+                                fill={entry.fill}
+                                style={{
+                                    filter: `drop-shadow(0 0 6px ${entry.fill})`,
                                     outline: 'none'
                                 }}
                             />
                         ))}
                     </Pie>
                     <Tooltip
-                        contentStyle={{ 
-                            background: 'rgba(15, 23, 42, 0.9)', 
-                            border: '1px solid rgba(255,255,255,0.1)', 
+                        contentStyle={{
+                            background: 'rgba(15, 23, 42, 0.9)',
+                            border: '1px solid rgba(255,255,255,0.1)',
                             borderRadius: '12px',
                             backdropFilter: 'blur(8px)'
                         }}
@@ -287,7 +287,10 @@ export const DefaultReasons = ({ data }) => {
                             <Cell 
                                 key={`cell-${index}`} 
                                 fill={entry.fill} 
-                                style={{ filter: `drop-shadow(0 0 6px ${entry.fill}88)` }}
+                                style={{ 
+                                    filter: `drop-shadow(0 0 6px ${entry.fill})`,
+                                    outline: 'none'
+                                }}
                             />
                         ))}
                     </Bar>

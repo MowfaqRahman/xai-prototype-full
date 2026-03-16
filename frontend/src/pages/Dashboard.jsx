@@ -74,7 +74,6 @@ const Dashboard = () => {
             <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <div>
                     <h1 style={{ margin: 0 }}><strong>Officer</strong> Overview</h1>
-                    <div style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Dashboard &gt; Branch &gt; <span style={{ color: 'var(--primary)' }}>Loan Performance</span></div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -91,7 +90,6 @@ const Dashboard = () => {
                     <KPICard title="Approval Rate" value={`${kpis.approval_rate}%`} trend="+2.1%" icon="ri-checkbox-circle-line" />
                     <KPICard title="Disbursement Rate" value={`${kpis.disbursement_rate}%`} trend="Stable" icon="ri-exchange-dollar-line" />
                     <KPICard title="Default Rate" value={`${kpis.default_rate}%`} trend="+0.4%" icon="ri-error-warning-line" />
-                    <KPICard title="Current NPA %" value={`${kpis.current_npa}%`} trend="Above Threshold" icon="ri-pie-chart-2-line" color="var(--danger)" />
                 </div>
             )}
 
@@ -135,7 +133,7 @@ const Dashboard = () => {
             </div>
 
             {/* DRILL-DOWN GRID */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
                 {/* [UI-5] HOME OWNERSHIP: Demographic breakdown based on housing status. */}
                 <div className="glass-card" style={{ padding: '1.5rem' }}>
                     <div className="card-title"><i className="ri-home-4-line"></i> Home Ownership</div>
@@ -148,22 +146,6 @@ const Dashboard = () => {
                     <div className="card-title"><i className="ri-list-alert-line"></i> Top Default Reasons</div>
                     <div style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '1rem' }}>AI-derived risk factors</div>
                     <DefaultReasons data={reasonData} />
-                </div>
-
-                {/* [UI-7] CRITICAL ALERTS: Notification panel for system-flagged portfolio risks. */}
-                <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid #f97316' }}>
-                    <div style={{ color: '#f97316', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.8rem' }}>
-                        <i className="ri-notification-3-line"></i> Critical Alerts
-                    </div>
-                    <div style={{ marginTop: '0.5rem' }}>
-                        {kpis && kpis.alerts && kpis.alerts.length > 0 ? (
-                            kpis.alerts.map((alert, idx) => (
-                                <AlertItem key={idx} icon={alert.icon} text={alert.text} />
-                            ))
-                        ) : (
-                            <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontStyle: 'italic' }}>No critical alerts. Portfolio stable.</div>
-                        )}
-                    </div>
                 </div>
             </div>
 
@@ -209,12 +191,6 @@ const KPICard = ({ title, value, trend, icon, color = '#fff' }) => (
     </div>
 );
 
-const AlertItem = ({ icon, text }) => (
-    <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '0.8rem', fontSize: '0.8rem', color: '#cbd5e1' }}>
-        <i className={icon} style={{ color: '#f97316', marginTop: '2px' }}></i>
-        <span>{text}</span>
-    </div>
-);
 
 const DashboardSkeleton = () => (
     <div className="fade-in" style={{ paddingBottom: '3rem' }}>
@@ -229,9 +205,8 @@ const DashboardSkeleton = () => (
             </div>
         </div>
 
-        {/* KPI CARDS SKELETON */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.2rem', marginBottom: '2rem' }}>
-            {[1, 2, 3, 4, 5].map(i => (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.2rem', marginBottom: '2rem' }}>
+            {[1, 2, 3, 4].map(i => (
                 <div key={i} className="skeleton-card" style={{ height: '120px' }}>
                     <div className="skeleton" style={{ width: '60%', height: '1rem', marginBottom: '1rem' }}></div>
                     <div className="skeleton" style={{ width: '80%', height: '2rem', marginBottom: '0.5rem' }}></div>
@@ -265,7 +240,7 @@ const DashboardSkeleton = () => (
         </div>
 
         {/* DRILL-DOWN GRID SKELETON */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
             <div className="skeleton-card" style={{ height: '350px' }}>
                 <div className="skeleton" style={{ width: '50%', height: '1.5rem', marginBottom: '1.5rem' }}></div>
                 <div className="skeleton" style={{ width: '100%', height: '250px' }}></div>
@@ -273,14 +248,6 @@ const DashboardSkeleton = () => (
             <div className="skeleton-card" style={{ height: '350px' }}>
                 <div className="skeleton" style={{ width: '50%', height: '1.5rem', marginBottom: '1.5rem' }}></div>
                 <div className="skeleton" style={{ width: '100%', height: '250px' }}></div>
-            </div>
-            <div className="skeleton-card" style={{ height: '350px', borderLeft: '4px solid rgba(249, 115, 22, 0.2)' }}>
-                <div className="skeleton" style={{ width: '50%', height: '1.5rem', marginBottom: '1.5rem' }}></div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                    {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="skeleton" style={{ width: '100%', height: '1rem' }}></div>
-                    ))}
-                </div>
             </div>
         </div>
 
