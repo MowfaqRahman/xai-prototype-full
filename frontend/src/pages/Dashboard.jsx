@@ -15,14 +15,13 @@ import { supabase } from '../supabaseClient';
 
 const Dashboard = () => {
     const [kpis, setKpis] = useState(null);
-    const [queue, setQueue] = useState([]);
-    const [trendData, setTrendData] = useState([]);
-    const [productData, setProductData] = useState([]);
-    const [riskData, setRiskData] = useState([]);
-    const [reasonData, setReasonData] = useState([]);
-    const [distributionData, setDistributionData] = useState([]);
-    const [homeData, setHomeData] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [queue, setQueue] = useState(null);
+    const [trendData, setTrendData] = useState(null);
+    const [productData, setProductData] = useState(null);
+    const [riskData, setRiskData] = useState(null);
+    const [reasonData, setReasonData] = useState(null);
+    const [distributionData, setDistributionData] = useState(null);
+    const [homeData, setHomeData] = useState(null);
     const [selectedApp, setSelectedApp] = useState(null);
 
     const navigate = useNavigate();
@@ -36,37 +35,21 @@ const Dashboard = () => {
         }
     };
 
-    const loadDashboardData = async () => {
-        setLoading(true);
-        try {
-            const [
-                kpiData, queueData, trend,
-                products, risks, reasons, distribution, home
-            ] = await Promise.all([
-                fetchKPIs(), fetchQueue(), fetchTrend(),
-                fetchProductPerformance(), fetchRiskSegmentation(), fetchDefaultReasons(),
-                fetchRiskDistribution(), fetchHomeOwnership()
-            ]);
-            setKpis(kpiData);
-            setQueue(queueData);
-            setTrendData(trend);
-            setProductData(products);
-            setRiskData(risks);
-            setReasonData(reasons);
-            setDistributionData(distribution);
-            setHomeData(home);
-        } catch (error) {
-            console.error("Dashboard error:", error);
-        } finally {
-            setLoading(false);
-        }
+    const loadDashboardData = () => {
+        fetchKPIs().then(setKpis).catch(err => console.error("Error fetching KPIs:", err));
+        fetchQueue().then(setQueue).catch(err => console.error("Error fetching queue:", err));
+        fetchTrend().then(setTrendData).catch(err => console.error("Error fetching trend:", err));
+        fetchProductPerformance().then(setProductData).catch(err => console.error("Error fetching product performance:", err));
+        fetchRiskSegmentation().then(setRiskData).catch(err => console.error("Error fetching risk segmentation:", err));
+        fetchDefaultReasons().then(setReasonData).catch(err => console.error("Error fetching default reasons:", err));
+        fetchRiskDistribution().then(setDistributionData).catch(err => console.error("Error fetching risk distribution:", err));
+        fetchHomeOwnership().then(setHomeData).catch(err => console.error("Error fetching home ownership:", err));
     };
 
     useEffect(() => {
         loadDashboardData();
     }, []);
 
-    if (loading) return <DashboardSkeleton />;
 
     return (
         <div className="fade-in" style={{ paddingBottom: '3rem' }}>
@@ -84,68 +67,72 @@ const Dashboard = () => {
             </div>
 
             {/* TOP KPI ROW */}
-            {kpis && (
+            {kpis ? (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.2rem', marginBottom: '2rem' }}>
                     <KPICard title="Total Application" value={kpis.total_applications.toLocaleString()} trend="+8.4% vs last month" icon="ri-file-list-3-line" />
                     <KPICard title="Approval Rate" value={`${kpis.approval_rate}%`} trend="+2.1%" icon="ri-checkbox-circle-line" />
                     <KPICard title="Disbursement Rate" value={`${kpis.disbursement_rate}%`} trend="Stable" icon="ri-exchange-dollar-line" />
                     <KPICard title="Default Rate" value={`${kpis.default_rate}%`} trend="+0.4%" icon="ri-error-warning-line" />
                 </div>
+            ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.2rem', marginBottom: '2rem' }}>
+                    {[1, 2, 3, 4].map(i => <KPICardSkeleton key={i} />)}
+                </div>
             )}
 
             {/* STRATEGIC INSIGHTS ROW */}
             {/* RISK & SEGMENTATION ROW */}
             <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-                {/* [UI-1] RISK VS CREDIT SCORE DISTRIBUTION: Renders a scatter plot mapping credit scores against default probability. */}
+                {/* [UI-1] RISK VS CREDIT SCORE DISTRIBUTION */}
                 <div className="glass-card" style={{ padding: '1.5rem' }}>
                     <div className="card-title"><i className="ri-bubble-chart-line"></i> Risk vs Credit Score Distribution</div>
                     <div style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '1.5rem' }}>Portfolio mapping: Credit score vs default probability</div>
-                    <RiskCreditScatter data={distributionData} />
+                    {distributionData ? <RiskCreditScatter data={distributionData} /> : <div className="skeleton" style={{ width: '100%', height: '300px' }}></div>}
                 </div>
 
-                {/* [UI-2] RISK SEGMENTATION: Visualization of portfolio risk buckets (Low, Med, High). */}
+                {/* [UI-2] RISK SEGMENTATION */}
                 <div className="glass-card" style={{ padding: '1.5rem' }}>
                     <div className="card-title"><i className="ri-donut-chart-line"></i> Risk Segmentation</div>
                     <div style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '1.5rem' }}>Portfolio breakdown by risk category</div>
                     <div style={{ marginTop: '2rem' }}>
-                        <RiskSegmentation data={riskData} />
+                        {riskData ? <RiskSegmentation data={riskData} /> : <div className="skeleton" style={{ width: '100%', height: '300px' }}></div>}
                     </div>
                 </div>
             </div>
 
             {/* TREND & PERFORMANCE ROW */}
             <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-                {/* [UI-3] APPROVED VS REJECTED TREND: Timeline chart showing monthly application decision outcomes. */}
+                {/* [UI-3] APPROVED VS REJECTED TREND */}
                 <div className="glass-card" style={{ padding: '1.5rem' }}>
                     <div className="card-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <span><i className="ri-line-chart-line"></i> Approved vs Rejected Trend</span>
                         <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>12 Month History</span>
                     </div>
-                    <TrendChart data={trendData} />
+                    {trendData ? <TrendChart data={trendData} /> : <div className="skeleton" style={{ width: '100%', height: '300px' }}></div>}
                 </div>
 
-                {/* [UI-4] PRODUCT PERFORMANCE: Chart showing the distribution of loan intents. */}
+                {/* [UI-4] PRODUCT PERFORMANCE */}
                 <div className="glass-card" style={{ padding: '1.5rem' }}>
                     <div className="card-title"><i className="ri-bar-chart-box-line"></i> Product Performance</div>
                     <div style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '1.5rem' }}>Approval volume by loan purpose</div>
-                    <ProductPerformance data={productData} />
+                    {productData ? <ProductPerformance data={productData} /> : <div className="skeleton" style={{ width: '100%', height: '300px' }}></div>}
                 </div>
             </div>
 
             {/* DRILL-DOWN GRID */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-                {/* [UI-5] HOME OWNERSHIP: Demographic breakdown based on housing status. */}
+                {/* [UI-5] HOME OWNERSHIP */}
                 <div className="glass-card" style={{ padding: '1.5rem' }}>
                     <div className="card-title"><i className="ri-home-4-line"></i> Home Ownership</div>
                     <div style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '1rem' }}>Applicant demographic profile</div>
-                    <HomeOwnershipPie data={homeData} />
+                    {homeData ? <HomeOwnershipPie data={homeData} /> : <div className="skeleton" style={{ width: '100%', height: '250px' }}></div>}
                 </div>
 
-                {/* [UI-6] TOP DEFAULT REASONS: AI insights into the primary factors causing application rejections. */}
+                {/* [UI-6] TOP DEFAULT REASONS */}
                 <div className="glass-card" style={{ padding: '1.5rem' }}>
                     <div className="card-title"><i className="ri-list-alert-line"></i> Top Default Reasons</div>
                     <div style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '1rem' }}>AI-derived risk factors</div>
-                    <DefaultReasons data={reasonData} />
+                    {reasonData ? <DefaultReasons data={reasonData} /> : <div className="skeleton" style={{ width: '100%', height: '250px' }}></div>}
                 </div>
             </div>
 
@@ -155,10 +142,18 @@ const Dashboard = () => {
                     <i className="ri-list-check-2"></i> Manual Review Queue
                 </div>
                 <div style={{ padding: '1.5rem' }}>
-                    <ReviewQueueTable
-                        queue={queue}
-                        onReviewClick={(app) => setSelectedApp(app)}
-                    />
+                    {queue ? (
+                        <ReviewQueueTable
+                            queue={queue}
+                            onReviewClick={(app) => setSelectedApp(app)}
+                        />
+                    ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            {[1, 2, 3, 4, 5].map(i => (
+                                <div key={i} className="skeleton" style={{ width: '100%', height: '2.5rem' }}></div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -191,78 +186,19 @@ const KPICard = ({ title, value, trend, icon, color = '#fff' }) => (
     </div>
 );
 
-
-const DashboardSkeleton = () => (
-    <div className="fade-in" style={{ paddingBottom: '3rem' }}>
-        {/* HEADER SKELETON */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-            <div>
-                <div className="skeleton" style={{ width: '250px', height: '2.5rem', marginBottom: '0.5rem' }}></div>
-                <div className="skeleton" style={{ width: '180px', height: '1rem' }}></div>
-            </div>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-                <div className="skeleton" style={{ width: '120px', height: '2.5rem' }}></div>
-            </div>
+const KPICardSkeleton = () => (
+    <div className="glass-card" style={{ padding: '1.2rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+            <div className="skeleton" style={{ width: '60%', height: '0.85rem' }}></div>
+            <div className="skeleton" style={{ width: '1.2rem', height: '1.2rem', borderRadius: '4px' }}></div>
         </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.2rem', marginBottom: '2rem' }}>
-            {[1, 2, 3, 4].map(i => (
-                <div key={i} className="skeleton-card" style={{ height: '120px' }}>
-                    <div className="skeleton" style={{ width: '60%', height: '1rem', marginBottom: '1rem' }}></div>
-                    <div className="skeleton" style={{ width: '80%', height: '2rem', marginBottom: '0.5rem' }}></div>
-                    <div className="skeleton" style={{ width: '40%', height: '0.8rem' }}></div>
-                </div>
-            ))}
-        </div>
-
-        {/* CHARTS SKELETON ROW 1 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-            <div className="skeleton-card" style={{ height: '400px' }}>
-                <div className="skeleton" style={{ width: '40%', height: '1.5rem', marginBottom: '1.5rem' }}></div>
-                <div className="skeleton" style={{ width: '100%', height: '300px' }}></div>
-            </div>
-            <div className="skeleton-card" style={{ height: '400px' }}>
-                <div className="skeleton" style={{ width: '40%', height: '1.5rem', marginBottom: '1.5rem' }}></div>
-                <div className="skeleton" style={{ width: '100%', height: '300px' }}></div>
-            </div>
-        </div>
-
-        {/* CHARTS SKELETON ROW 2 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-            <div className="skeleton-card" style={{ height: '400px' }}>
-                <div className="skeleton" style={{ width: '40%', height: '1.5rem', marginBottom: '1.5rem' }}></div>
-                <div className="skeleton" style={{ width: '100%', height: '300px' }}></div>
-            </div>
-            <div className="skeleton-card" style={{ height: '400px' }}>
-                <div className="skeleton" style={{ width: '40%', height: '1.5rem', marginBottom: '1.5rem' }}></div>
-                <div className="skeleton" style={{ width: '100%', height: '300px' }}></div>
-            </div>
-        </div>
-
-        {/* DRILL-DOWN GRID SKELETON */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-            <div className="skeleton-card" style={{ height: '350px' }}>
-                <div className="skeleton" style={{ width: '50%', height: '1.5rem', marginBottom: '1.5rem' }}></div>
-                <div className="skeleton" style={{ width: '100%', height: '250px' }}></div>
-            </div>
-            <div className="skeleton-card" style={{ height: '350px' }}>
-                <div className="skeleton" style={{ width: '50%', height: '1.5rem', marginBottom: '1.5rem' }}></div>
-                <div className="skeleton" style={{ width: '100%', height: '250px' }}></div>
-            </div>
-        </div>
-
-        {/* TABLE SKELETON */}
-
-        <div className="skeleton-card" style={{ height: '300px' }}>
-            <div className="skeleton" style={{ width: '30%', height: '1.5rem', marginBottom: '1.5rem' }}></div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {[1, 2, 3, 4, 5].map(i => (
-                    <div key={i} className="skeleton" style={{ width: '100%', height: '2.5rem' }}></div>
-                ))}
-            </div>
-        </div>
+        <div className="skeleton" style={{ width: '80%', height: '2.16rem', margin: '0.2rem 0' }}></div>
+        <div className="skeleton" style={{ width: '40%', height: '0.75rem', marginTop: '0.4rem' }}></div>
     </div>
 );
+
+
+
 
 
 export default Dashboard;
